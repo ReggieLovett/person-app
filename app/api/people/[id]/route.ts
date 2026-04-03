@@ -99,8 +99,3 @@ export async function DELETE(
     );
   }
 }
-      { error: "Failed to delete person" },
-      { status: 500 }
-    );
-  }
-}
