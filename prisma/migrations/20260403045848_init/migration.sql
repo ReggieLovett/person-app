@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "Person" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
     "email" TEXT NOT NULL,
@@ -8,8 +8,10 @@ CREATE TABLE "Person" (
     "age" INTEGER,
     "city" TEXT,
     "bio" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Person_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
