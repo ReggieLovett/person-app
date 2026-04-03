@@ -1,15 +1,10 @@
 -- CreateTable
 CREATE TABLE "Person" (
-    "id" SERIAL NOT NULL,
-    "firstName" TEXT NOT NULL,
-    "lastName" TEXT NOT NULL,
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "age" INTEGER NOT NULL,
     "email" TEXT NOT NULL,
-    "phone" TEXT,
-    "age" INTEGER,
-    "city" TEXT,
-    "bio" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Person_pkey" PRIMARY KEY ("id")
 );

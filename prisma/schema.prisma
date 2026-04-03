@@ -13,14 +13,9 @@ datasource db {
 }
 
 model Person {
-  id        Int     @id @default(autoincrement())
-  firstName String
-  lastName  String
-  email     String  @unique
-  phone     String?
-  age       Int?
-  city      String?
-  bio       String?
+  id        String   @id @default(cuid())
+  name      String
+  age       Int
+  email     String   @unique
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }

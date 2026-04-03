@@ -18,24 +18,20 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { firstName, lastName, email, phone, age, city, bio } = body;
+    const { name, age, email } = body;
 
-    if (!firstName || !lastName || !email) {
+    if (!name || age === undefined || !email) {
       return NextResponse.json(
-        { error: "First name, last name, and email are required" },
+        { error: "Name, age, and email are required" },
         { status: 400 }
       );
     }
 
     const person = await prisma.person.create({
       data: {
-        firstName,
-        lastName,
+        name,
+        age: parseInt(age),
         email,
-        phone: phone || null,
-        age: age ? parseInt(age) : null,
-        city: city || null,
-        bio: bio || null,
       },
     });
 
@@ -50,14 +46,12 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    if (errorMessage.includes("does not exist")) {
-      return NextResponse.json(
-        { error: "Database table not found - migrations may not have run" },
-        { status: 500 }
-      );
-    }
     return NextResponse.json(
       { error: `Failed to create person: ${errorMessage}` },
+      { status: 500 }
+    );
+  }
+}
       { status: 500 }
     );
   }

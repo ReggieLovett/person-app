@@ -3,31 +3,22 @@
 import { useState, useEffect } from "react";
 
 interface Person {
-  id: number;
-  firstName: string;
-  lastName: string;
+  id: string;
+  name: string;
+  age: number;
   email: string;
-  phone?: string;
-  age?: number;
-  city?: string;
-  bio?: string;
   createdAt: string;
-  updatedAt: string;
 }
 
 const PersonCRUD = () => {
   const [people, setPeople] = useState<Person[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
+    name: "",
     age: "",
-    city: "",
-    bio: "",
+    email: "",
   });
 
   useEffect(() => {
@@ -71,8 +62,9 @@ const PersonCRUD = () => {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...formData,
-          age: formData.age ? parseInt(formData.age) : null,
+          name: formData.name,
+          age: parseInt(formData.age),
+          email: formData.email,
         }),
       });
 
@@ -82,13 +74,9 @@ const PersonCRUD = () => {
       }
 
       setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
+        name: "",
         age: "",
-        city: "",
-        bio: "",
+        email: "",
       });
       setEditingId(null);
       fetchPeople();
@@ -104,17 +92,13 @@ const PersonCRUD = () => {
   const handleEdit = (person: Person) => {
     setEditingId(person.id);
     setFormData({
-      firstName: person.firstName,
-      lastName: person.lastName,
+      name: person.name,
       email: person.email,
-      phone: person.phone || "",
-      age: person.age?.toString() || "",
-      city: person.city || "",
-      bio: person.bio || "",
+      age: person.age.toString(),
     });
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this person?")) return;
 
     try {
@@ -137,13 +121,9 @@ const PersonCRUD = () => {
   const handleCancel = () => {
     setEditingId(null);
     setFormData({
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
+      name: "",
       age: "",
-      city: "",
-      bio: "",
+      email: "",
     });
     setError("");
   };
@@ -166,21 +146,21 @@ const PersonCRUD = () => {
           {editingId ? "Edit Person" : "Add New Person"}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <input
               type="text"
-              name="firstName"
-              placeholder="First Name *"
-              value={formData.firstName}
+              name="name"
+              placeholder="Name *"
+              value={formData.name}
               onChange={handleInputChange}
               required
               className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
-              type="text"
-              name="lastName"
-              placeholder="Last Name *"
-              value={formData.lastName}
+              type="number"
+              name="age"
+              placeholder="Age *"
+              value={formData.age}
               onChange={handleInputChange}
               required
               className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -194,39 +174,7 @@ const PersonCRUD = () => {
               required
               className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <input
-              type="tel"
-              name="phone"
-              placeholder="Phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="number"
-              name="age"
-              placeholder="Age"
-              value={formData.age}
-              onChange={handleInputChange}
-              className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="text"
-              name="city"
-              placeholder="City"
-              value={formData.city}
-              onChange={handleInputChange}
-              className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
           </div>
-          <textarea
-            name="bio"
-            placeholder="Bio"
-            value={formData.bio}
-            onChange={handleInputChange}
-            className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            rows={3}
-          />
           <div className="flex gap-3">
             <button
               type="submit"
@@ -265,22 +213,18 @@ const PersonCRUD = () => {
               <thead className="bg-gray-100 border-b">
                 <tr>
                   <th className="text-left px-4 py-2">Name</th>
+                  <th className="text-left px-4 py-2">Age</th>
                   <th className="text-left px-4 py-2 hidden sm:table-cell">Email</th>
-                  <th className="text-left px-4 py-2 hidden md:table-cell">City</th>
                   <th className="text-left px-4 py-2 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {people.map((person) => (
                   <tr key={person.id} className="border-b hover:bg-gray-50">
-                    <td className="px-4 py-3">
-                      {person.firstName} {person.lastName}
-                    </td>
+                    <td className="px-4 py-3 font-medium">{person.name}</td>
+                    <td className="px-4 py-3">{person.age}</td>
                     <td className="px-4 py-3 hidden sm:table-cell text-gray-600">
                       {person.email}
-                    </td>
-                    <td className="px-4 py-3 hidden md:table-cell text-gray-600">
-                      {person.city || "-"}
                     </td>
                     <td className="px-4 py-3 text-right">
                       <button

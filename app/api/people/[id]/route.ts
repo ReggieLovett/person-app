@@ -8,7 +8,7 @@ export async function GET(
   try {
     const { id } = await params;
     const person = await prisma.person.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     if (!person) {
@@ -34,25 +34,21 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { firstName, lastName, email, phone, age, city, bio } = body;
+    const { name, age, email } = body;
 
-    if (!firstName || !lastName || !email) {
+    if (!name || age === undefined || !email) {
       return NextResponse.json(
-        { error: "First name, last name, and email are required" },
+        { error: "Name, age, and email are required" },
         { status: 400 }
       );
     }
 
     const person = await prisma.person.update({
-      where: { id: parseInt(id) },
+      where: { id },
       data: {
-        firstName,
-        lastName,
+        name,
+        age: parseInt(age),
         email,
-        phone: phone || null,
-        age: age ? parseInt(age) : null,
-        city: city || null,
-        bio: bio || null,
       },
     });
 
@@ -85,7 +81,7 @@ export async function DELETE(
   try {
     const { id } = await params;
     await prisma.person.delete({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     return NextResponse.json({ success: true });
@@ -98,6 +94,11 @@ export async function DELETE(
       );
     }
     return NextResponse.json(
+      { error: "Failed to delete person" },
+      { status: 500 }
+    );
+  }
+}
       { error: "Failed to delete person" },
       { status: 500 }
     );
