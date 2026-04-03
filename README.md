@@ -2,7 +2,12 @@
 
 A full-stack web application demonstrating production-grade CRUD (Create, Read, Update, Delete) operations with a modern tech stack.
 
-## 🎯 Key Features
+## 🎯 Live Deployment
+**Production URL**: https://person-app-eight.vercel.app/
+
+See [PRODUCTION_DEPLOYMENT.md](./PRODUCTION_DEPLOYMENT.md) for full deployment status and next steps.
+
+## ✨ Key Features
 
 - ✅ **Complete CRUD** - Create, read, update, and delete person records
 - ✅ **Responsive Design** - Works on desktop, tablet, and mobile devices
@@ -11,6 +16,7 @@ A full-stack web application demonstrating production-grade CRUD (Create, Read, 
 - ✅ **API Routes** - RESTful endpoints for all operations
 - ✅ **Type Safety** - Full TypeScript support throughout
 - ✅ **Sample Data** - 6 pre-built person records for testing
+- ✅ **Auto-Deploy** - GitHub → Vercel continuous deployment
 
 ## 🚀 Quick Start
 
@@ -27,6 +33,7 @@ npm run dev
 ```
 
 Visit http://localhost:3000
+
 
 ### Production Deployment (Vercel)
 See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete instructions.
