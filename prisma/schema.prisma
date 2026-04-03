@@ -13,9 +13,13 @@ datasource db {
 }
 
 model Person {
-  id        String   @id @default(cuid())
-  name      String
-  age       Int
-  email     String   @unique
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  name       String
+  age        Int
+  email      String   @unique
+  phone      String?
+  position   String?
+  department String?
+  bio        String?
+  createdAt  DateTime @default(now())
 }

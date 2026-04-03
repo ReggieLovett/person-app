@@ -34,7 +34,7 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { name, age, email } = body;
+    const { name, age, email, phone, position, department, bio } = body;
 
     if (!name || age === undefined || !email) {
       return NextResponse.json(
@@ -49,6 +49,10 @@ export async function PUT(
         name,
         age: parseInt(age),
         email,
+        phone: phone || null,
+        position: position || null,
+        department: department || null,
+        bio: bio || null,
       },
     });
 
