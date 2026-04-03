@@ -41,15 +41,23 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(person, { status: 201 });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("Create person error:", errorMessage);
+    
     if (errorMessage.includes("Unique constraint failed")) {
       return NextResponse.json(
         { error: "Email already exists" },
         { status: 400 }
       );
     }
+    if (errorMessage.includes("does not exist")) {
+      return NextResponse.json(
+        { error: "Database table not found - migrations may not have run" },
+        { status: 500 }
+      );
+    }
     return NextResponse.json(
-      { error: "Failed to create person" },
+      { error: `Failed to create person: ${errorMessage}` },
       { status: 500 }
     );
   }
