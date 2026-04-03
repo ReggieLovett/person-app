@@ -1,8 +1,7 @@
 import Link from "next/link";
 
 export default function GitHub() {
-  // Use environment variable or default
-  const githubUrl = process.env.NEXT_PUBLIC_GITHUB_URL || "https://github.com/YOUR_USERNAME/person-app";
+  const githubUrl = "https://github.com/ReggieLovett/person-app";
 
   return (
     <main className="min-h-screen bg-gray-50">
