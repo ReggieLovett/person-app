@@ -119,6 +119,57 @@ export default function About() {
           </section>
 
           <section className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">MCP Integration Architecture</h2>
+            <p className="text-gray-700 mb-4">
+              Person App features advanced MCP (Model Context Protocol) server integration,
+              enabling Claude Desktop to perform CRUD operations through AI-powered conversations.
+            </p>
+            <div className="bg-purple-50 border-l-4 border-purple-600 p-4 rounded-lg mb-4">
+              <h3 className="font-semibold text-purple-900 mb-2">How MCP Works</h3>
+              <p className="text-gray-700 text-sm">
+                The MCP server acts as an intelligent intermediary between Claude and the Person App database.
+                Claude Desktop can request CRUD operations through natural language, which are then executed
+                through the MCP tools. This enables conversational, AI-driven database management.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="bg-gray-50 p-4 rounded border border-gray-200">
+                <h4 className="font-semibold mb-2 text-gray-800">📱 Claude Desktop</h4>
+                <p className="text-sm text-gray-600">
+                  Client requests CRUD operations through natural conversation
+                </p>
+              </div>
+              <div className="bg-gray-50 p-4 rounded border border-gray-200">
+                <h4 className="font-semibold mb-2 text-gray-800">⚙️ MCP Server</h4>
+                <p className="text-sm text-gray-600">
+                  Translates Claude requests into API calls
+                </p>
+              </div>
+              <div className="bg-gray-50 p-4 rounded border border-gray-200">
+                <h4 className="font-semibold mb-2 text-gray-800">🌐 Person App</h4>
+                <p className="text-sm text-gray-600">
+                  RESTful API handles database operations
+                </p>
+              </div>
+              <div className="bg-gray-50 p-4 rounded border border-gray-200">
+                <h4 className="font-semibold mb-2 text-gray-800">💾 Database</h4>
+                <p className="text-sm text-gray-600">
+                  Persistent storage via Prisma & PostgreSQL
+                </p>
+              </div>
+            </div>
+            <div className="space-y-2 text-gray-700">
+              <p><strong>Available MCP Tools:</strong></p>
+              <ul className="list-disc list-inside space-y-1 text-sm">
+                <li><code className="bg-gray-100 px-2 py-1 rounded">create_person</code> - Add new person records</li>
+                <li><code className="bg-gray-100 px-2 py-1 rounded">read_people</code> - Fetch person data</li>
+                <li><code className="bg-gray-100 px-2 py-1 rounded">update_person</code> - Modify existing records</li>
+                <li><code className="bg-gray-100 px-2 py-1 rounded">delete_person</code> - Remove records</li>
+              </ul>
+            </div>
+          </section>
+
+          <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4">Development Setup</h2>
             <div className="bg-gray-100 p-4 rounded-lg font-mono text-sm">
               <p className="mb-2"># Install dependencies</p>

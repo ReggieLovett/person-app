@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Person App - CRUD Operations",
+  title: "Person App - MCP-Enabled CRUD Operations",
   description:
-    "A full-stack person management application with Create, Read, Update, and Delete operations",
+    "A full-stack person management application with MCP server integration, enabling AI-driven CRUD operations through Claude Desktop",
 };
 
 export default function RootLayout({
@@ -41,6 +41,18 @@ export default function RootLayout({
                 className="text-gray-700 hover:text-blue-600 transition font-medium"
               >
                 Home
+              </Link>
+              <Link
+                href="/mcp-demo"
+                className="text-purple-600 hover:text-purple-700 transition font-medium"
+              >
+                MCP Demo
+              </Link>
+              <Link
+                href="/mcp-setup"
+                className="text-purple-600 hover:text-purple-700 transition font-medium"
+              >
+                MCP Setup
               </Link>
               <Link
                 href="/about"

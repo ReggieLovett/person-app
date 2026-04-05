@@ -5,9 +5,85 @@
 - ✅ Prisma ORM with SQLite (local) and PostgreSQL (production)
 - ✅ Full CRUD API routes (`/api/people`, `/api/people/[id]`)
 - ✅ React UI component with form and table
-- ✅ Documentation pages: `/about`, `/database`, `/github`
+- ✅ **MCP Server for Claude Desktop integration**
+- ✅ Documentation pages: `/about`, `/database`, `/github`, `/mcp-setup`, `/mcp-demo`
 - ✅ 6 sample person records seeded in database
 - ✅ Responsive Tailwind CSS design
+
+## Quick Start - MCP Setup
+
+### Option 1: Deploy to Vercel First, Then Setup MCP
+
+**Step 1: Deploy your app to Vercel** (see "Deployment to Vercel" section below)
+
+**Step 2: Clone the MCP Server Repository**
+```bash
+git clone https://github.com/ReggieLovett/person-mcp-server.git
+cd person-mcp-server
+npm install
+```
+
+**Step 3: Update Claude Desktop Config**
+Edit `~/.config/Claude/claude_desktop_config.json` (or platform-specific path):
+```json
+{
+  "mcpServers": {
+    "person-crud": {
+      "command": "node",
+      "args": ["/path/to/person-mcp-server/mcp-server.js"],
+      "env": {
+        "PERSON_APP_URL": "https://your-app.vercel.app/api"
+      }
+    }
+  }
+}
+```
+
+**Step 4: Restart Claude Desktop**
+Close and reopen Claude Desktop completely.
+
+**Step 5: Test in Claude**
+Ask: "Use the get_server_status tool to check if the MCP server is connected"
+
+### Option 2: Local Testing of MCP
+
+**Note**: For local testing, ensure your Person App is running on `http://localhost:3000`
+
+```bash
+# Terminal 1: Start Person App
+npm run dev
+
+# Terminal 2: Start MCP Server
+node mcp-server.js
+
+# Terminal 3: Use Claude Desktop (configured for localhost)
+# Update config.json with: "PERSON_APP_URL": "http://localhost:3000/api"
+```
+
+## Available MCP Tools
+
+Once configured, Claude Desktop can use these tools:
+
+### create_person
+Create a new person record
+- Required: name, age, email
+- Optional: phone, position, department, bio
+
+### read_people
+Fetch person data
+- Optional: id (if omitted, returns all people)
+
+### update_person
+Modify an existing person record
+- Required: id
+- Optional: any field to update
+
+### delete_person
+Remove a person record
+- Required: id
+
+### get_server_status
+Check MCP server connection and availability
 
 ## Local Testing
 ```bash
