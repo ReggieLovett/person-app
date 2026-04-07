@@ -12,7 +12,7 @@
     "migrate:prod": "prisma migrate deploy"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^0.1.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@prisma/client": "^5.22.0",
     "axios": "^1.6.0",
     "dotenv": "^17.4.0",
