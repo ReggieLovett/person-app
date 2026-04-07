@@ -19,6 +19,8 @@ const PersonCRUD = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [isDark, setIsDark] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     age: "",
@@ -28,6 +30,17 @@ const PersonCRUD = () => {
     department: "",
     bio: "",
   });
+
+  useEffect(() => {
+    // Load theme from localStorage
+    const savedTheme = localStorage.getItem("theme");
+    const darkMode = savedTheme === "dark" || 
+      (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    setIsDark(darkMode);
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    }
+  }, []);
 
   useEffect(() => {
     fetchPeople();
@@ -152,33 +165,87 @@ const PersonCRUD = () => {
     setError("");
   };
 
+  const toggleTheme = () => {
+    const newDarkMode = !isDark;
+    setIsDark(newDarkMode);
+    
+    if (newDarkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  };
+
+  const filteredPeople = people.filter((person) => {
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      person.name.toLowerCase().includes(searchLower) ||
+      person.email.toLowerCase().includes(searchLower) ||
+      (person.position && person.position.toLowerCase().includes(searchLower)) ||
+      (person.department && person.department.toLowerCase().includes(searchLower))
+    );
+  });
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
+    <div className={`min-h-screen transition-colors duration-200 ${
+      isDark 
+        ? "bg-gradient-to-br from-slate-900 to-slate-800" 
+        : "bg-gradient-to-br from-slate-50 to-slate-100"
+    } p-8`}>
       <div className="max-w-7xl mx-auto">
-        <div className="mb-12">
-          <h1 className="text-5xl font-bold text-slate-900 mb-3">
-            Manage Your Team
-          </h1>
-          <p className="text-xl text-slate-600">
-            Add, edit, and manage team member information with ease.
-          </p>
+        <div className="flex justify-between items-start mb-12">
+          <div>
+            <h1 className={`text-5xl font-bold mb-3 ${
+              isDark ? "text-white" : "text-slate-900"
+            }`}>
+              Manage Your Team
+            </h1>
+            <p className={`text-xl ${
+              isDark ? "text-slate-400" : "text-slate-600"
+            }`}>
+              Add, edit, and manage team member information with ease.
+            </p>
+          </div>
+          <button
+            onClick={toggleTheme}
+            className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+              isDark 
+                ? "bg-yellow-500 hover:bg-yellow-600 text-slate-900" 
+                : "bg-slate-700 hover:bg-slate-800 text-white"
+            }`}
+            title="Toggle dark/light mode"
+          >
+            {isDark ? "☀️ Light" : "🌙 Dark"}
+          </button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-slate-900 mb-6">
+          <div className={`rounded-2xl shadow-lg p-8 transition-colors ${
+            isDark ? "bg-slate-800" : "bg-white"
+          }`}>
+            <h2 className={`text-2xl font-bold mb-6 ${
+              isDark ? "text-white" : "text-slate-900"
+            }`}>
               {editingId ? "Edit Team Member" : "Add New Team Member"}
             </h2>
 
             {error && (
-              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+              <div className={`mb-4 p-4 border rounded-lg ${
+                isDark
+                  ? "bg-red-900/30 border-red-700 text-red-300"
+                  : "bg-red-50 border-red-200 text-red-700"
+              }`}>
                 {error}
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                <label className={`block text-sm font-semibold mb-2 ${
+                  isDark ? "text-slate-300" : "text-slate-700"
+                }`}>
                   Full Name *
                 </label>
                 <input
@@ -187,14 +254,20 @@ const PersonCRUD = () => {
                   value={formData.name}
                   onChange={handleInputChange}
                   placeholder="e.g. John Doe"
-                  className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                    isDark
+                      ? "bg-slate-700 border-slate-600 text-white placeholder-slate-400"
+                      : "bg-white border-slate-300 text-slate-900"
+                  }`}
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  <label className={`block text-sm font-semibold mb-2 ${
+                    isDark ? "text-slate-300" : "text-slate-700"
+                  }`}>
                     Age *
                   </label>
                   <input
@@ -203,12 +276,18 @@ const PersonCRUD = () => {
                     value={formData.age}
                     onChange={handleInputChange}
                     placeholder="e.g. 28"
-                    className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                      isDark
+                        ? "bg-slate-700 border-slate-600 text-white placeholder-slate-400"
+                        : "bg-white border-slate-300 text-slate-900"
+                    }`}
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  <label className={`block text-sm font-semibold mb-2 ${
+                    isDark ? "text-slate-300" : "text-slate-700"
+                  }`}>
                     Email *
                   </label>
                   <input
@@ -217,14 +296,20 @@ const PersonCRUD = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder="e.g. john@example.com"
-                    className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                      isDark
+                        ? "bg-slate-700 border-slate-600 text-white placeholder-slate-400"
+                        : "bg-white border-slate-300 text-slate-900"
+                    }`}
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                <label className={`block text-sm font-semibold mb-2 ${
+                  isDark ? "text-slate-300" : "text-slate-700"
+                }`}>
                   Phone Number
                 </label>
                 <input
@@ -233,12 +318,18 @@ const PersonCRUD = () => {
                   value={formData.phone}
                   onChange={handleInputChange}
                   placeholder="e.g. +1-555-0101"
-                  className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                    isDark
+                      ? "bg-slate-700 border-slate-600 text-white placeholder-slate-400"
+                      : "bg-white border-slate-300 text-slate-900"
+                  }`}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                <label className={`block text-sm font-semibold mb-2 ${
+                  isDark ? "text-slate-300" : "text-slate-700"
+                }`}>
                   Position/Job Title
                 </label>
                 <input
@@ -247,19 +338,29 @@ const PersonCRUD = () => {
                   value={formData.position}
                   onChange={handleInputChange}
                   placeholder="e.g. Senior Developer"
-                  className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                    isDark
+                      ? "bg-slate-700 border-slate-600 text-white placeholder-slate-400"
+                      : "bg-white border-slate-300 text-slate-900"
+                  }`}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                <label className={`block text-sm font-semibold mb-2 ${
+                  isDark ? "text-slate-300" : "text-slate-700"
+                }`}>
                   Department
                 </label>
                 <select
                   name="department"
                   value={formData.department}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                    isDark
+                      ? "bg-slate-700 border-slate-600 text-white"
+                      : "bg-white border-slate-300 text-slate-900"
+                  }`}
                 >
                   <option value="">Select a department</option>
                   <option value="Engineering">Engineering</option>
@@ -274,7 +375,9 @@ const PersonCRUD = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                <label className={`block text-sm font-semibold mb-2 ${
+                  isDark ? "text-slate-300" : "text-slate-700"
+                }`}>
                   Bio / Notes
                 </label>
                 <textarea
@@ -283,7 +386,11 @@ const PersonCRUD = () => {
                   onChange={handleInputChange}
                   placeholder="Brief description about this team member..."
                   rows={3}
-                  className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-colors ${
+                    isDark
+                      ? "bg-slate-700 border-slate-600 text-white placeholder-slate-400"
+                      : "bg-white border-slate-300 text-slate-900"
+                  }`}
                 />
               </div>
 
@@ -291,7 +398,11 @@ const PersonCRUD = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-2.5 rounded-lg transition-colors"
+                  className={`flex-1 font-semibold py-2.5 rounded-lg transition-colors ${
+                    isDark
+                      ? "bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white"
+                      : "bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white"
+                  }`}
                 >
                   {loading ? "Saving..." : editingId ? "Update" : "Add Person"}
                 </button>
@@ -299,7 +410,11 @@ const PersonCRUD = () => {
                   <button
                     type="button"
                     onClick={handleCancel}
-                    className="flex-1 bg-slate-300 hover:bg-slate-400 text-slate-900 font-semibold py-2.5 rounded-lg transition-colors"
+                    className={`flex-1 font-semibold py-2.5 rounded-lg transition-colors ${
+                      isDark
+                        ? "bg-slate-700 hover:bg-slate-600 text-slate-100"
+                        : "bg-slate-300 hover:bg-slate-400 text-slate-900"
+                    }`}
                   >
                     Cancel
                   </button>
@@ -308,31 +423,67 @@ const PersonCRUD = () => {
             </form>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-slate-900 mb-6">
-              Team Members ({people.length})
+          <div className={`rounded-2xl shadow-lg p-8 transition-colors ${
+            isDark ? "bg-slate-800" : "bg-white"
+          }`}>
+            <h2 className={`text-2xl font-bold mb-6 ${
+              isDark ? "text-white" : "text-slate-900"
+            }`}>
+              Team Members ({filteredPeople.length})
             </h2>
 
+            <div className="mb-4">
+              <input
+                type="text"
+                placeholder="Search by name, email, position, or department..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                  isDark
+                    ? "bg-slate-700 border-slate-600 text-white placeholder-slate-400"
+                    : "bg-white border-slate-300 text-slate-900"
+                }`}
+              />
+            </div>
+
             {loading && !people.length ? (
-              <div className="text-center py-8 text-slate-600">Loading...</div>
-            ) : people.length === 0 ? (
-              <div className="text-center py-8 text-slate-600">
-                No team members yet. Add one to get started!
+              <div className={`text-center py-8 ${
+                isDark ? "text-slate-400" : "text-slate-600"
+              }`}>
+                Loading...
+              </div>
+            ) : filteredPeople.length === 0 ? (
+              <div className={`text-center py-8 ${
+                isDark ? "text-slate-400" : "text-slate-600"
+              }`}>
+                {searchQuery 
+                  ? "No results matching your search."
+                  : "No team members yet. Add one to get started!"}
               </div>
             ) : (
-              <div className="space-y-4 max-h-[calc(100vh-400px)] overflow-y-auto">
-                {people.map((person) => (
+              <div className={`space-y-4 max-h-[calc(100vh-400px)] overflow-y-auto ${
+                isDark ? "[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-slate-700 [&::-webkit-scrollbar-thumb]:bg-slate-600" : ""
+              }`}>
+                {filteredPeople.map((person) => (
                   <div
                     key={person.id}
-                    className="border border-slate-200 rounded-lg p-4 hover:border-blue-300 hover:bg-blue-50 transition-all"
+                    className={`border rounded-lg p-4 transition-all ${
+                      isDark
+                        ? "border-slate-700 bg-slate-700 hover:border-blue-500 hover:bg-slate-700/80"
+                        : "border-slate-200 bg-white hover:border-blue-300 hover:bg-blue-50"
+                    }`}
                   >
                     <div className="flex justify-between items-start mb-2">
                       <div>
-                        <h3 className="font-semibold text-slate-900 text-lg">
+                        <h3 className={`font-semibold text-lg ${
+                          isDark ? "text-white" : "text-slate-900"
+                        }`}>
                           {person.name}
                         </h3>
                         {person.position && (
-                          <p className="text-sm text-blue-600 font-medium">
+                          <p className={`text-sm font-medium ${
+                            isDark ? "text-blue-400" : "text-blue-600"
+                          }`}>
                             {person.position}
                           </p>
                         )}
@@ -340,41 +491,65 @@ const PersonCRUD = () => {
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleEdit(person)}
-                          className="px-3 py-1.5 bg-blue-100 hover:bg-blue-200 text-blue-700 font-semibold rounded transition-colors text-sm"
+                          className={`px-3 py-1.5 font-semibold rounded transition-colors text-sm ${
+                            isDark
+                              ? "bg-blue-700 hover:bg-blue-600 text-white"
+                              : "bg-blue-100 hover:bg-blue-200 text-blue-700"
+                          }`}
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDelete(person.id)}
-                          className="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 font-semibold rounded transition-colors text-sm"
+                          className={`px-3 py-1.5 font-semibold rounded transition-colors text-sm ${
+                            isDark
+                              ? "bg-red-700 hover:bg-red-600 text-white"
+                              : "bg-red-100 hover:bg-red-200 text-red-700"
+                          }`}
                         >
                           Delete
                         </button>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2 text-sm text-slate-600">
+                    <div className={`grid grid-cols-2 gap-2 text-sm ${
+                      isDark ? "text-slate-300" : "text-slate-600"
+                    }`}>
                       <p>
-                        <span className="font-semibold text-slate-700">Age:</span>{" "}
+                        <span className={`font-semibold ${
+                          isDark ? "text-slate-200" : "text-slate-700"
+                        }`}>
+                          Age:
+                        </span>{" "}
                         {person.age}
                       </p>
                       <p>
-                        <span className="font-semibold text-slate-700">Email:</span>{" "}
+                        <span className={`font-semibold ${
+                          isDark ? "text-slate-200" : "text-slate-700"
+                        }`}>
+                          Email:
+                        </span>{" "}
                         <a
                           href={`mailto:${person.email}`}
-                          className="text-blue-600 hover:underline"
+                          className={`hover:underline ${
+                            isDark ? "text-blue-400" : "text-blue-600"
+                          }`}
                         >
                           {person.email}
                         </a>
                       </p>
                       {person.phone && (
                         <p>
-                          <span className="font-semibold text-slate-700">
+                          <span className={`font-semibold ${
+                            isDark ? "text-slate-200" : "text-slate-700"
+                          }`}>
                             Phone:
                           </span>{" "}
                           <a
                             href={`tel:${person.phone}`}
-                            className="text-blue-600 hover:underline"
+                            className={`hover:underline ${
+                              isDark ? "text-blue-400" : "text-blue-600"
+                            }`}
                           >
                             {person.phone}
                           </a>
@@ -382,7 +557,9 @@ const PersonCRUD = () => {
                       )}
                       {person.department && (
                         <p>
-                          <span className="font-semibold text-slate-700">
+                          <span className={`font-semibold ${
+                            isDark ? "text-slate-200" : "text-slate-700"
+                          }`}>
                             Department:
                           </span>{" "}
                           {person.department}
@@ -391,7 +568,11 @@ const PersonCRUD = () => {
                     </div>
 
                     {person.bio && (
-                      <p className="mt-2 text-sm text-slate-600 italic border-t border-slate-700 pt-2">
+                      <p className={`mt-2 text-sm italic border-t pt-2 ${
+                        isDark
+                          ? "text-slate-400 border-slate-600"
+                          : "text-slate-600 border-slate-700"
+                      }`}>
                         {person.bio}
                       </p>
                     )}
